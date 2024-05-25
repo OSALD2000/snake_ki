@@ -1,0 +1,1 @@
+/usr/bin/g++-11 -g -rdynamic CMakeFiles/first_projekt.dir/main.cpp.o -o first_projekt 

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Site BuildName="(empty)"
+	BuildStamp="20240516-1054-Experimental"
+	Name="(empty)"
+	Generator="ctest-3.27.4"
+	CompilerName=""
+	CompilerVersion=""
+	OSName="Linux"
+	Hostname="ThinkPad-P14sOSA"
+	OSRelease="6.5.0-35-generic"
+	OSVersion="#35-Ubuntu SMP PREEMPT_DYNAMIC Fri Apr 26 11:23:57 UTC 2024"
+	OSPlatform="x86_64"
+	Is64Bits="1"
+	VendorString="AuthenticAMD"
+	VendorID="Advanced Micro Devices"
+	FamilyID="25"
+	ModelID="116"
+	ProcessorCacheSize="1024"
+	NumberOfLogicalCPU="16"
+	NumberOfPhysicalCPU="8"
+	TotalVirtualMemory="8191"
+	TotalPhysicalMemory="27694"
+	LogicalProcessorsPerPhysical="2"
+	ProcessorClockFrequency="4951.85"
+	>
+	<Testing>
+		<StartDateTime>May 16 20:18 CEST</StartDateTime>
+		<StartTestTime>1715883538</StartTestTime>
+		<TestList/>
+		<EndDateTime>May 16 20:18 CEST</EndDateTime>
+		<EndTestTime>1715883538</EndTestTime>
+		<ElapsedMinutes>0</ElapsedMinutes>
+	</Testing>
+</Site>

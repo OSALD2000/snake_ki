@@ -1,15 +1,28 @@
-from Xlib import X, display, XK
+from Xlib import X, display
 from Xlib.ext import record
 from Xlib import protocol
 from PIL import Image
-from Xlib.ext import xtest
+import time
 from enum import Enum
 import subprocess
 from functools import partial
 import numpy as np
 import os
 
-R = []
+class REWARD(Enum):
+    APPLE = 1000
+    COLLISION = -500
+    MOVE = -1
+    WIN = 2000
+    LOSE = -2000
+
+class STATE(Enum):
+    RUNNING = 0,
+    WIN = 1,
+    LOSE = 2,
+    EAT_APPLE = 3,
+    COLLISION = 4,
+
 MAP = np.array([])
 
 class windowNotFoundError(Exception):
@@ -127,11 +140,11 @@ def update(window):
 
 ############# main ###############
 if __name__ == "__main__":
-    
+    process = subprocess.Popen(['./build/snake_game'], close_fds=True)
+    time.sleep(2)
     try:
-        window = get_window()
-        while(True):
-            update(window=window)
-        
+        window = get_window()  
+        update(window=window)
+        process.terminate()
     except windowNotFoundError as e:
         print(e)

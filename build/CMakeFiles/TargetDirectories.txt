@@ -1,0 +1,3 @@
+/home/osa/Private/C_Sfml_Game/build/CMakeFiles/snake_game.dir
+/home/osa/Private/C_Sfml_Game/build/CMakeFiles/edit_cache.dir
+/home/osa/Private/C_Sfml_Game/build/CMakeFiles/rebuild_cache.dir
