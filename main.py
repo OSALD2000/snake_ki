@@ -37,10 +37,10 @@ class KEYS(Enum):
     DOWN = "Down"
 
 class WORLD(Enum):
-    EMPTY_CELL = 0,
-    WALL = 1,
-    APPLE = 2,
-    SNAKE_BODY_CELL = 3,
+    EMPTY_CELL = 0
+    WALL = 1
+    APPLE = 2
+    SNAKE_BODY_CELL = 3
     SNAKE_HEAD = 4
 
 
@@ -99,19 +99,16 @@ def get_cell_value(pixle_map, x, y):
     g_mean = g_sum / 21
     b_mean = b_sum / 21
             
-    if r_mean > 100:
-        return WORLD.APPLE.value[0]
             
+    if g_mean > 100 and r_mean > 100:
+        return WORLD.SNAKE_HEAD.value
+    elif r_mean > 100:
+        return WORLD.APPLE.value
     elif b_mean > 100:
-        return WORLD.WALL.value[0]
-            
-    elif g_mean > 100 and r_mean > 100:
-        return WORLD.SNAKE_HEAD.value[0]
-            
+        return WORLD.WALL.value
     elif g_mean > 100:
-        return WORLD.SNAKE_BODY_CELL.value[0]
-            
-    return WORLD.EMPTY_CELL.value[0]
+        return WORLD.SNAKE_BODY_CELL.value
+    return WORLD.EMPTY_CELL.value
  
 
 def update_features(pixle_map, image):
@@ -145,6 +142,7 @@ if __name__ == "__main__":
     try:
         window = get_window()  
         update(window=window)
+        
         process.terminate()
     except windowNotFoundError as e:
         print(e)
