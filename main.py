@@ -1,6 +1,4 @@
 from Xlib import X, display
-from Xlib.ext import record
-from Xlib import protocol
 from PIL import Image
 import time
 from enum import Enum
@@ -8,33 +6,30 @@ import subprocess
 from functools import partial
 import numpy as np
 import os
+from Agent import Agent
 
-class REWARD(Enum):
-    APPLE = 1000
-    COLLISION = -500
-    MOVE = -1
-    WIN = 2000
-    LOSE = -2000
-
-class STATE(Enum):
-    RUNNING = 0,
-    WIN = 1,
-    LOSE = 2,
-    EAT_APPLE = 3,
-    COLLISION = 4,
+## Feature
 
 MAP = np.array([])
+SNAKE_HEAD_COORDINATE = (-1, -1)
+APPLE_COORDINATE = (-1, -1)
+SCOURE = -3
+
 
 class windowNotFoundError(Exception):
     def __init__(self, message="windowNotFound !!"):
         self.message = message
         super().__init__(self.message)
-    
-class KEYS(Enum):
-    LEFT = "Left"
-    RIGHT = "Right"
-    UP = "Up"
-    DOWN = "Down"
+
+class REWARD(Enum):
+    EAT_APPLE = 1000
+    MOVE = -1
+    LOSE = -2000
+
+class STATE(Enum):
+    MOVE = 0,
+    LOSE = 2,
+    EAT_APPLE = 3,
 
 class WORLD(Enum):
     EMPTY_CELL = 0
@@ -43,17 +38,6 @@ class WORLD(Enum):
     SNAKE_BODY_CELL = 3
     SNAKE_HEAD = 4
 
-
-def send_key_press(key):
-    subprocess.call(["xdotool", "key", key])
-
-
-ACTIONS = {
-    KEYS.LEFT.value:    partial(send_key_press, KEYS.LEFT.value),
-    KEYS.RIGHT.value:   partial(send_key_press, KEYS.RIGHT.value),
-    KEYS.UP.value:      partial(send_key_press, KEYS.UP.value),
-    KEYS.DOWN.value:    partial(send_key_press, KEYS.DOWN.value),
-}
 
 
     
@@ -112,21 +96,37 @@ def get_cell_value(pixle_map, x, y):
  
 
 def update_features(pixle_map, image):
+    snake_head = [-1, -1]
+    apple = [-1, -1]
+    scoure = -3 ##body_length
+    
     map = np.zeros((int(image.height/20), int(image.width/20)) , dtype=np.int32)
     print(map.shape)
     for (x, row)in enumerate(map):
         for (y, cell) in enumerate(row):
             value = get_cell_value(pixle_map, x, y)
+            if value == WORLD.SNAKE_HEAD.value:
+                snake_head[0]=x
+                snake_head[1]=y
+                scoure+=1
+                
+            elif value == WORLD.APPLE.value:
+                apple[0]=x
+                apple[0]=y
+                
+            elif value == WORLD.SNAKE_BODY_CELL.value:
+                scoure+=1
+                
             map[x][y] = value
 
-    return map        
-            
+    return map, snake_head, apple, scoure 
+             
             
             
 def update(window):
     image = get_window_image(window=window)
     pixle_map = get_window_pixle_map(image=image)
-    MAP = update_features(pixle_map, image)
+    MAP, SNAKE_HEAD_COORDINATE, APPLE_COORDINATE, SCOURE = update_features(pixle_map, image)
     
     os.system("cls" if os.name == "nt" else "clear")
     for row in MAP:
@@ -140,9 +140,9 @@ if __name__ == "__main__":
     process = subprocess.Popen(['./build/snake_game'], close_fds=True)
     time.sleep(2)
     try:
-        window = get_window()  
+        window = get_window()
         update(window=window)
-        
         process.terminate()
+        
     except windowNotFoundError as e:
         print(e)
