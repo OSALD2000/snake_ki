@@ -3,9 +3,7 @@ from PIL import Image
 import time
 from enum import Enum
 import subprocess
-from functools import partial
 import numpy as np
-import os
 from Agent import Agent
 
 ## Feature
@@ -27,9 +25,9 @@ class REWARD(Enum):
     LOSE = -2000
 
 class STATE(Enum):
-    MOVE = 0,
-    LOSE = 2,
-    EAT_APPLE = 3,
+    MOVE = 0
+    LOSE = 2
+    EAT_APPLE = 3
 
 class WORLD(Enum):
     EMPTY_CELL = 0
@@ -49,7 +47,7 @@ def get_window():
             window = display_obj.create_resource_object('window', windowID)
             window_name = window.get_full_property(display_obj.intern_atom('_NET_WM_NAME'), X.AnyPropertyType).value
             if window_name == "SNAKE_GAME_WINDOWS":
-               return window
+               return window , windowID
     
     raise windowNotFoundError()
     
@@ -96,12 +94,11 @@ def get_cell_value(pixle_map, x, y):
  
 
 def update_features(pixle_map, image):
-    snake_head = [-1, -1]
-    apple = [-1, -1]
+    snake_head = np.array([-1, -1])
+    apple = np.array([-1, -1])
     scoure = -3 ##body_length
     
     map = np.zeros((int(image.height/20), int(image.width/20)) , dtype=np.int32)
-    print(map.shape)
     for (x, row)in enumerate(map):
         for (y, cell) in enumerate(row):
             value = get_cell_value(pixle_map, x, y)
@@ -122,27 +119,87 @@ def update_features(pixle_map, image):
     return map, snake_head, apple, scoure 
              
             
-            
 def update(window):
     image = get_window_image(window=window)
     pixle_map = get_window_pixle_map(image=image)
-    MAP, SNAKE_HEAD_COORDINATE, APPLE_COORDINATE, SCOURE = update_features(pixle_map, image)
+    return update_features(pixle_map, image)
+
+
+
+def calculate_new_state(window):
+    map, NEW_SNAKE_HEAD_COORDINATE, apple, NEW_SCOURE = update(window=window)
     
-    os.system("cls" if os.name == "nt" else "clear")
-    for row in MAP:
-        for cell in row:
-            print(cell, end=" ")
-        print()
+    if NEW_SCOURE == 0 and ((SNAKE_HEAD_COORDINATE[0] - NEW_SNAKE_HEAD_COORDINATE[0])**2) > 1 and ((SNAKE_HEAD_COORDINATE[1] - NEW_SNAKE_HEAD_COORDINATE[1])**2) > 1:
+        return STATE.LOSE.value, REWARD.LOSE.value
+    
+    if NEW_SCOURE > SCOURE:
+        return STATE.EAT_APPLE.value, REWARD.EAT_APPLE.value
+    
+    return STATE.MOVE.value , REWARD.MOVE.value
 
-
-############# main ###############
-if __name__ == "__main__":
-    process = subprocess.Popen(['./build/snake_game'], close_fds=True)
-    time.sleep(2)
-    try:
-        window = get_window()
-        update(window=window)
-        process.terminate()
+def get_env(window):
         
-    except windowNotFoundError as e:
-        print(e)
+        map, snake_head, apple, scoure = update(window=window)
+        map_flat = map.flatten()
+        snake_head_flat = snake_head.flatten()
+        apple_flat = apple.flatten()
+
+        combined_flat = np.concatenate([map_flat, snake_head_flat, apple_flat])
+
+        env = combined_flat.reshape(1, -1)
+        
+        return env
+    
+############# main ###############
+        
+if __name__ == "__main__":
+    try:
+        
+        num_episodes = 1000
+        max_steps_per_episode = 1000
+        learning_rate = 0.1
+        discount_rate = 0.99
+        exploration_rate = 1
+        max_exploration_rate = 1
+        min_exploration_rate = 0.01
+        exploration_decay_rate = 0.01
+        
+        window, window_id = get_window()
+        MAP, SNAKE_HEAD_COORDINATE, APPLE_COORDINATE, SCOURE = update(window=window)
+        map_flat = MAP.flatten()
+        snake_head_flat = SNAKE_HEAD_COORDINATE.flatten()
+        apple_flat = APPLE_COORDINATE.flatten()
+        
+        combined_flat = np.concatenate([map_flat, snake_head_flat, apple_flat])
+        
+        feature_size = combined_flat.shape[0]
+        
+        agent = Agent(state_size=3, action_size=4, feature_size = feature_size)
+        
+        for episode in range(num_episodes):
+            state = STATE.MOVE.value
+            total_reward = 0
+            
+            for step in range(max_steps_per_episode):
+
+                old_env = get_env(window)
+
+                action = agent.act(env=[old_env])
+                    
+                new_state, reward = calculate_new_state(window)
+                
+                new_env = get_env(window)
+                
+                agent.update_q_values([old_env], action, reward, [new_env], learning_rate, discount_rate)
+                
+                total_reward += reward
+                state = new_state
+                
+                if state == STATE.LOSE.value:
+                    break
+            
+            
+            print("Episode:", episode, "Total Reward:", total_reward)
+            
+    except Exception as e:
+        print("Error:", e)

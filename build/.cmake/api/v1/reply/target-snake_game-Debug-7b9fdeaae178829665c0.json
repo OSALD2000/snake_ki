@@ -80,17 +80,17 @@
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "/usr/lib/x86_64-linux-gnu/libsfml-graphics.so.2.5.1",
+				"fragment" : "/usr/lib/x86_64-linux-gnu/libsfml-graphics.so.2.6.1",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "/usr/lib/x86_64-linux-gnu/libsfml-window.so.2.5.1",
+				"fragment" : "/usr/lib/x86_64-linux-gnu/libsfml-window.so.2.6.1",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "/usr/lib/x86_64-linux-gnu/libsfml-system.so.2.5.1",
+				"fragment" : "/usr/lib/x86_64-linux-gnu/libsfml-system.so.2.6.1",
 				"role" : "libraries"
 			}
 		],

@@ -67,6 +67,7 @@ CMakeFiles/snake_game.dir/src/World.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/time64.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+ /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
  /usr/include/c++/11/bits/localefwd.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++locale.h \
  /usr/include/c++/11/clocale /usr/include/locale.h \
@@ -217,7 +218,9 @@ CMakeFiles/snake_game.dir/src/World.cpp.o: \
  /usr/include/SFML/Window/Sensor.hpp /usr/include/SFML/Window/Touch.hpp \
  /usr/include/SFML/Window/VideoMode.hpp \
  /usr/include/SFML/Window/Window.hpp \
- /usr/include/SFML/Window/WindowHandle.hpp \
+ /usr/include/SFML/Window/WindowBase.hpp \
+ /usr/include/SFML/Window/Vulkan.hpp \
+ /usr/include/SFML/Window/WindowHandle.hpp /usr/include/c++/11/cstddef \
  /usr/include/SFML/Window/WindowStyle.hpp \
  /usr/include/SFML/Graphics/BlendMode.hpp \
  /usr/include/SFML/Graphics/Export.hpp \
